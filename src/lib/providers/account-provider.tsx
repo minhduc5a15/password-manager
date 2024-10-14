@@ -4,9 +4,9 @@ import React, { useRef, ReactNode, createContext, useContext, useEffect } from '
 import { useStore } from 'zustand';
 
 import { createAccountStore, type AccountStore } from '@/lib/stores/account-store';
-import { type Account } from '@/lib/types';
+import { type Account, AccountInfo } from '@/lib/types';
 import { Multimap } from '@/lib/multimap';
-import { useAccountQuery } from '@/lib/hooks/useAccount';
+import { useAccount } from '@/lib/hooks/useAccount';
 
 export const AccountContext = createContext<ReturnType<typeof createAccountStore> | undefined>(undefined);
 
@@ -16,22 +16,24 @@ export interface AccountProviderProps {
 
 export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) => {
     const store = useRef(createAccountStore());
-    const { setAccountList, setAccountMap } = store.current.getState();
+    const { setAccountList, setAccountMap, setAccountIdMap } = store.current.getState();
 
-    const { isPending, data } = useAccountQuery();
+    const { isPending, accounts } = useAccount();
 
     useEffect(() => {
-        if (isPending || !data) return;
-        setAccountList(data!);
+        if (isPending || !Array.isArray(accounts)) return;
+        setAccountList(accounts);
 
-        const newMap = new Multimap<string, Account>();
+        const newAccountMap = new Multimap<string, Account>();
+        const newAccountIdMap = new Map<string, AccountInfo>();
 
-        data.forEach(account => {
-            newMap.set(account.platform, account);
+        accounts.forEach(account => {
+            newAccountMap.set(account.platform, account);
+            newAccountIdMap.set(account['_id'], account as AccountInfo);
         });
-        setAccountMap(newMap);
-
-    }, [data, isPending, setAccountList, setAccountMap]);
+        setAccountMap(newAccountMap);
+        setAccountIdMap(newAccountIdMap);
+    }, [accounts, isPending, setAccountIdMap, setAccountList, setAccountMap]);
 
     return <AccountContext.Provider value={store.current}>{children}</AccountContext.Provider>;
 };

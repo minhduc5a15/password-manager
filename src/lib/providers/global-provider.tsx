@@ -4,8 +4,9 @@ import { useStore } from 'zustand';
 import React, { useRef, type ReactNode, createContext, useContext, useEffect } from 'react';
 
 import { createGlobalStore, type GlobalStore } from '@/lib/stores/global-store';
-import { useAccountStore } from '@/lib/providers/account-provider';
+import { useAccountStore } from '@/lib/hooks';
 import axios from 'axios';
+import Aos from 'aos';
 
 export const GlobalContext = createContext<ReturnType<typeof createGlobalStore> | undefined>(undefined);
 
@@ -16,16 +17,24 @@ export interface GlobalProviderProps {
 export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     const store = useRef(createGlobalStore());
     const { setImageHash } = store.current.getState();
-    const { accountMap } = useAccountStore(state => state);
+    const { accountMap } = useAccountStore();
+
+    useEffect(() => {
+        Aos.init({
+            duration: 1000,
+        });
+        Aos.refresh();
+    }, []);
 
     useEffect(() => {
         const fetchImages = async () => {
             const temp = new Map<string, string>();
             const promises = Array.from(accountMap.keys()).map(async key => {
                 try {
-                    const res = await axios.get(`/api/images/logo/${key}.png`);
+                    const res = await axios.get<string>(`/api/images/logo/${key}.png`);
                     temp.set(key, res.data);
-                } catch {}
+                } catch {
+                }
             });
 
             await Promise.all(promises);
@@ -34,7 +43,6 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
 
         fetchImages();
     }, [accountMap, setImageHash]);
-
 
     return <GlobalContext.Provider value={store.current}>{children}</GlobalContext.Provider>;
 };

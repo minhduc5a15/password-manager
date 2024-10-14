@@ -1,4 +1,4 @@
-import { Account } from '@/lib/types';
+import { Account, AccountInfo } from '@/lib/types';
 import { v4 } from 'uuid';
 import { ExternalLink } from 'lucide-react';
 import { isValidURL } from '@/lib/utils';
@@ -7,7 +7,7 @@ import React from 'react';
 import { CopyButton, Label, Button, Input } from '@/components/ui';
 
 export interface AccountMoreDetails {
-    account: Account;
+    account: Account | AccountInfo;
 }
 
 export const AccountMoreDetails: React.FC<AccountMoreDetails> = ({ account }) => {
@@ -27,12 +27,7 @@ export const AccountMoreDetails: React.FC<AccountMoreDetails> = ({ account }) =>
                                 readOnly
                                 className="rounded-none text-gray-100 border-b-[1px] border-white/30 focus:outline-0"
                             />
-                            <CopyButton
-                                value={informations[keyInfo].toString()}
-                                variant="ghost"
-                                size="icon"
-                                className="text-gray-400 hover:text-red-400"
-                            />
+                            <CopyButton value={informations[keyInfo].toString()} variant="ghost" size="icon" className="text-gray-400 hover:text-red-400" />
                             {isValidURL(informations[keyInfo].toString()) && (
                                 <Button variant="ghost" size="icon" className="text-gray-400 hover:text-red-400">
                                     <Link href={informations[keyInfo].toString()} target="_blank">

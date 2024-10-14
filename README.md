@@ -1,3 +1,3 @@
-# Bun + Tauri + Next + Typescript
+# Hi there 👋
 
-This template should help get you started developing with Tauri, Next and Typescript.
+![GitHub stats](https://github-readme-stats-52blue.vercel.app/api/top-langs/?username=minhduc5a15&repo=code&layout=compact&theme=transparent&hide_border=true)

@@ -6,8 +6,4 @@ export type Account = {
     [key: string]: string;
 };
 
-export type Image = {
-    name: string;
-    base64: string;
-    url?: string;
-};
+export type AccountInfo = Omit<Account, '_id'>

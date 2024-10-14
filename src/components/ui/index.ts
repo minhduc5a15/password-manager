@@ -5,3 +5,5 @@ export * from './copyButton';
 export * from './input';
 export * from './label';
 export * from './scroll-area';
+export * from './dialog';
+export * from './loading';
